@@ -1,0 +1,10 @@
+.git/
+.vs/
+Debug/
+*.suo
+*.mdb
+*.ldb
+*.sln
+*.config
+*.dat
+*.asc
