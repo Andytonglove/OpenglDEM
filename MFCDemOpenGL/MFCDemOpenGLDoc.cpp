@@ -590,7 +590,7 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 
 void CMFCDemOpenGLDoc::ReadTextureFile(CString m_texFileName)
 {
-	//读取纹理数据
+	//读取纹理数据 TODO
 	/*
 	CDib* m_pDib = new CDib(m_texFileName);
 	height = m_pDib->GetDibHeight();

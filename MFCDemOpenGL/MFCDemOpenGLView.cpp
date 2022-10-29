@@ -87,7 +87,7 @@ void CMFCDemOpenGLView::DrawScene()
 		gluPerspective(45.0f, 1.0f, 1.0f, 10000.0f);
 	}
 	else if (!IsPerspective) {
-		glOrtho(0.0f, 1000.0f, 0.0f, 1000.0f, 1.0f, 10000.0f); // 参数可能还需要再调一下
+		glOrtho(-1000.0f, 1000.0f, -1000.0f, 1000.0f, 1.0f, 10000.0f); // 参数可能还需要再调一下
 	}
 
 	glMatrixMode(GL_MODELVIEW); // 设置模型视图矩阵
