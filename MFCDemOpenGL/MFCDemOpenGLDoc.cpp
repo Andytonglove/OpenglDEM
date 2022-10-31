@@ -206,7 +206,7 @@ BOOL CMFCDemOpenGLDoc::ReadDEMFile(CString fileName)
 
 	if ((fp = fopen(fileName, "r")) == NULL)
 	{
-		AfxMessageBox(_T("open dtm file error!"));
+		AfxMessageBox(_T("open DEM file error!"));
 		return FALSE;
 	}
 	//fscanf(fp, "%f%f%d%d%f%f", &minX, &minY, &row, &column, &cellx, &celly);//&cell

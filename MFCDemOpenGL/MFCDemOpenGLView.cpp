@@ -226,7 +226,7 @@ void CMFCDemOpenGLView::Init()
     hrc = wglCreateContext(m_pDC->GetSafeHdc());
     wglMakeCurrent(m_pDC->GetSafeHdc(), hrc);
 
-//     GetClientRect(&m_oldRect);
+	//GetClientRect(&m_oldRect);
 
     glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -423,7 +423,7 @@ void CMFCDemOpenGLView::OnTimer(UINT_PTR nIDEvent)
 
 void CMFCDemOpenGLView::OnRotatez()
 {
-	// 绕Z轴旋转
+	// 绕Z轴中心旋转 漫游
 	m_play = !m_play;
 	Invalidate(FALSE);
 }
@@ -458,14 +458,14 @@ void CMFCDemOpenGLView::OnRotatexa()
 
 void CMFCDemOpenGLView::OnRight()
 {
-	// 右移
+	// 向右平移
 	center_x -= 20.f;
 	Invalidate(FALSE);
 }
 
 void CMFCDemOpenGLView::OnLeft()
 {
-	// 左移
+	// 向左平移
 	center_x += 20.f;
 	Invalidate(FALSE);
 }
@@ -486,14 +486,14 @@ void CMFCDemOpenGLView::OnShorten()
 
 void CMFCDemOpenGLView::OnZoomin()
 {
-	// 放大
+	// 放大场景视图
 	eye_z /= 1.2f;
 	Invalidate(FALSE);
 }
 
 void CMFCDemOpenGLView::OnZoomout()
 {
-	// 缩小
+	// 缩小场景视图
 	eye_z *= 1.2f;
 	Invalidate(FALSE);
 }
@@ -520,7 +520,7 @@ void CMFCDemOpenGLView::OnTexture()
 
 void CMFCDemOpenGLView::OnFill()
 {
-	// 填充三角形
+	// 是否填充三角形
 	IsFilled = !IsFilled;
 	Invalidate(FALSE);
 }
