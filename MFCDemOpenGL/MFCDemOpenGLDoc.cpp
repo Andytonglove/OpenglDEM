@@ -40,9 +40,9 @@ CMFCDemOpenGLDoc::CMFCDemOpenGLDoc() noexcept
 	height = 0;
 	m_pTextureBits = NULL;
 
-	dtmX = NULL;
-	dtmY = NULL;
-	dtmZ = NULL;
+	demX = NULL;
+	demY = NULL;
+	demZ = NULL;
 	nvs = NULL;
 	column = 0;
 	row = 0;
@@ -51,9 +51,9 @@ CMFCDemOpenGLDoc::CMFCDemOpenGLDoc() noexcept
 
 CMFCDemOpenGLDoc::~CMFCDemOpenGLDoc()
 {
-	if (dtmX != NULL)	delete[]dtmX;
-	if (dtmY != NULL)	delete[]dtmY;
-	if (dtmY != NULL)	delete[]dtmZ;
+	if (demX != NULL)	delete[]demX;
+	if (demY != NULL)	delete[]demY;
+	if (demY != NULL)	delete[]demZ;
 	if (nvs != NULL)	delete[]nvs;
 }
 
@@ -103,11 +103,11 @@ BOOL CMFCDemOpenGLDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 	else if (strFileType == "DAT")
 	{
-		return ReadDTMFile(lpszPathName);
+		return ReadDEMFile(lpszPathName);
 	}
 	else if (strFileType == "ASC")
 	{
-		return ReadDTMFile(lpszPathName);
+		return ReadDEMFile(lpszPathName);
 	}
 	else
 	{
@@ -190,13 +190,13 @@ void CMFCDemOpenGLDoc::Dump(CDumpContext& dc) const
 
 // CMFCDemOpenGLDoc 命令
 
-BOOL CMFCDemOpenGLDoc::ReadDTMFile(CString fileName)
+BOOL CMFCDemOpenGLDoc::ReadDEMFile(CString fileName)
 {
 	DataExist = TRUE;
 
-	if (dtmX != NULL)	delete[]dtmX;
-	if (dtmY != NULL)	delete[]dtmY;
-	if (dtmY != NULL)	delete[]dtmZ;
+	if (demX != NULL)	delete[]demX;
+	if (demY != NULL)	delete[]demY;
+	if (demY != NULL)	delete[]demZ;
 	if (nvs != NULL)	delete[]nvs;
 
 	FILE* fp;
@@ -216,40 +216,40 @@ BOOL CMFCDemOpenGLDoc::ReadDTMFile(CString fileName)
 	fscanf(fp, "%s%d\n%s%d\n%s%f\n%s%f\n%s%f\n%s%f\n", strtmp, &column, strtmp, &row, strtmp, &minX, strtmp, &minY, strtmp, &cellx, strtmp, &noData);
 	celly = cellx; // 对于这个DEM是相同的
 	
-	dtmX = new GLfloat[column * row];
-	dtmY = new GLfloat[column * row];
-	dtmZ = new GLfloat[column * row];
+	demX = new GLfloat[column * row];
+	demY = new GLfloat[column * row];
+	demZ = new GLfloat[column * row];
 	nvs = new Vector[(column - 1) * (row - 1) * 2];
 
 	GLfloat z;
 	for (int j = 0;j < row;j++)
 		for (int i = 0;i < column;i++)
 		{
-			dtmX[j * column + i] = minX + i * cellx;
-			dtmY[j * column + i] = minY + j * celly;
+			demX[j * column + i] = minX + i * cellx;
+			demY[j * column + i] = minY + j * celly;
 
 			fscanf(fp, "%f", &z);
-			dtmZ[j * column + i] = z;
+			demZ[j * column + i] = z;
 
 			if (i == 0 && j == 0)
 			{
-				minZ = dtmZ[j * column + i];
-				maxZ = dtmZ[j * column + i];
+				minZ = demZ[j * column + i];
+				maxZ = demZ[j * column + i];
 
-				maxX = minX = dtmX[j * column + i];
-				maxY = minY = dtmY[j * column + i];
+				maxX = minX = demX[j * column + i];
+				maxY = minY = demY[j * column + i];
 			}
 			else
 			{
-				if (dtmZ[j * column + i] > maxZ)	maxZ = dtmZ[j * column + i];
-				if (dtmZ[j * column + i] < minZ)	minZ = dtmZ[j * column + i];
+				if (demZ[j * column + i] > maxZ)	maxZ = demZ[j * column + i];
+				if (demZ[j * column + i] < minZ)	minZ = demZ[j * column + i];
 			}
 		}
 
 	fclose(fp);
 
-	maxX = dtmX[column - 1];
-	maxY = dtmY[(row - 1) * column];
+	maxX = demX[column - 1];
+	maxY = demY[(row - 1) * column];
 
 	Xc = (maxX + minX) / 2;
 	Yc = (maxY + minY) / 2;
@@ -265,9 +265,9 @@ BOOL CMFCDemOpenGLDoc::ReadGRDFile(CString fileName)
 {
 	DataExist = TRUE;
 
-	if (dtmX != NULL)	delete[]dtmX;
-	if (dtmY != NULL)	delete[]dtmY;
-	if (dtmY != NULL)	delete[]dtmZ;
+	if (demX != NULL)	delete[]demX;
+	if (demY != NULL)	delete[]demY;
+	if (demY != NULL)	delete[]demZ;
 	if (nvs != NULL)	delete[]nvs;
 
 	FILE* fp;
@@ -277,7 +277,9 @@ BOOL CMFCDemOpenGLDoc::ReadGRDFile(CString fileName)
 		return FALSE;
 	}
 
-	char  tmp[50];
+	char tmp[50];
+	
+	// 依次读入信息
 	fscanf(fp, "%s", tmp);
 	fscanf(fp, "%s", tmp);
 	column = atoi(tmp);
@@ -303,23 +305,23 @@ BOOL CMFCDemOpenGLDoc::ReadGRDFile(CString fileName)
 	fscanf(fp, "%s", tmp);
 	maxZ = (float)atof(tmp);
 
-	cellx = (maxX - minX) / (column - 1);  //X向（横向）间距
-	celly = (maxY - minY) / (row - 1);     //Y向（纵向）间距
+	cellx = (maxX - minX) / (column - 1);  // X向间距（横向）
+	celly = (maxY - minY) / (row - 1);     // Y向间距（纵向）
 
-	dtmX = new GLfloat[column * row];
-	dtmY = new GLfloat[column * row];
-	dtmZ = new GLfloat[column * row];
+	demX = new GLfloat[column * row];
+	demY = new GLfloat[column * row];
+	demZ = new GLfloat[column * row];
 	nvs = new Vector[(column - 1) * (row - 1) * 2];
 
 	GLfloat z;
 	for (int j = 0;j < row;j++)
 		for (int i = 0;i < column;i++)
 		{
-			dtmX[j * column + i] = minX + i * cellx;
-			dtmY[j * column + i] = minY + j * celly;
+			demX[j * column + i] = minX + i * cellx;
+			demY[j * column + i] = minY + j * celly;
 
 			fscanf(fp, "%f", &z);
-			dtmZ[j * column + i] = z;
+			demZ[j * column + i] = z;
 		}
 
 	fclose(fp);
@@ -339,9 +341,9 @@ void CMFCDemOpenGLDoc::Centerlize()
 	for (int j = 0;j < row;j++)
 		for (int i = 0;i < column;i++)
 		{
-			dtmX[j * column + i] = dtmX[j * column + i] - Xc;
-			dtmY[j * column + i] = dtmY[j * column + i] - Yc;
-			dtmZ[j * column + i] = dtmZ[j * column + i] - Zc;
+			demX[j * column + i] = demX[j * column + i] - Xc;
+			demY[j * column + i] = demY[j * column + i] - Yc;
+			demZ[j * column + i] = demZ[j * column + i] - Zc;
 		}
 
 	maxZ -= Zc;	minZ -= Zc;
@@ -349,7 +351,7 @@ void CMFCDemOpenGLDoc::Centerlize()
 
 void CMFCDemOpenGLDoc::GetTriNormal(GLfloat* vertex1, GLfloat* vertex2, GLfloat* vertex3, GLfloat* normal)
 {
-	//计算三角形的法向量
+	// 计算三角形的法向量
 	GLfloat vector1[3], vector2[3];
 
 	vector1[0] = vertex2[0] - vertex1[0];//X
@@ -383,35 +385,35 @@ void CMFCDemOpenGLDoc::CalNormals()
 	for (i = 0;i < row - 1;i++)
 		for (j = 0;j < column - 1;j++)
 		{
-			//将每个DEM网格分成左右两个三角形
-			vertex1[0] = dtmX[(i + 1) * column + j];
-			vertex1[1] = dtmY[(i + 1) * column + j];
-			vertex1[2] = dtmZ[(i + 1) * column + j];
+			// 将每个DEM网格分成左右两个三角形
+			vertex1[0] = demX[(i + 1) * column + j];
+			vertex1[1] = demY[(i + 1) * column + j];
+			vertex1[2] = demZ[(i + 1) * column + j];
 
-			vertex2[0] = dtmX[i * column + j];
-			vertex2[1] = dtmY[i * column + j];
-			vertex2[2] = dtmZ[i * column + j];
+			vertex2[0] = demX[i * column + j];
+			vertex2[1] = demY[i * column + j];
+			vertex2[2] = demZ[i * column + j];
 
-			vertex3[0] = dtmX[i * column + j + 1];
-			vertex3[1] = dtmY[i * column + j + 1];
-			vertex3[2] = dtmZ[i * column + j + 1];
+			vertex3[0] = demX[i * column + j + 1];
+			vertex3[1] = demY[i * column + j + 1];
+			vertex3[2] = demZ[i * column + j + 1];
 
 			GetTriNormal(vertex1, vertex2, vertex3, normal);
 			nvs[(i * (column - 1) + j) * 2 + 0].X = normal[0];
 			nvs[(i * (column - 1) + j) * 2 + 0].Y = normal[1];
 			nvs[(i * (column - 1) + j) * 2 + 0].Z = normal[2];
 
-			vertex1[0] = dtmX[(i + 1) * column + j];
-			vertex1[1] = dtmY[(i + 1) * column + j];
-			vertex1[2] = dtmZ[(i + 1) * column + j];
+			vertex1[0] = demX[(i + 1) * column + j];
+			vertex1[1] = demY[(i + 1) * column + j];
+			vertex1[2] = demZ[(i + 1) * column + j];
 
-			vertex2[0] = dtmX[i * column + j + 1];
-			vertex2[1] = dtmY[i * column + j + 1];
-			vertex2[2] = dtmZ[i * column + j + 1];
+			vertex2[0] = demX[i * column + j + 1];
+			vertex2[1] = demY[i * column + j + 1];
+			vertex2[2] = demZ[i * column + j + 1];
 
-			vertex3[0] = dtmX[(i + 1) * column + j + 1];
-			vertex3[1] = dtmY[(i + 1) * column + j + 1];
-			vertex3[2] = dtmZ[(i + 1) * column + j + 1];
+			vertex3[0] = demX[(i + 1) * column + j + 1];
+			vertex3[1] = demY[(i + 1) * column + j + 1];
+			vertex3[2] = demZ[(i + 1) * column + j + 1];
 
 			GetTriNormal(vertex1, vertex2, vertex3, normal);
 			nvs[(i * (column - 1) + j) * 2 + 1].X = normal[0];
@@ -437,25 +439,25 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 	{
 		if (m_pTextureBits == NULL)
 		{
-			CString m_texFileName = pView->GetTextureFileName();
+			CString m_texFileName = pView->GetTextureFile();
 			ReadTextureFile(m_texFileName);
 		}
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		//定义纹理
+		// 定义纹理
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_pTextureBits);//
 
-		//控制纹理
+		// 控制纹理
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-		//说明贴图方式
+		// 说明贴图方式
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-		//启动纹理贴图
+		// 启动纹理贴图
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
 
@@ -470,13 +472,13 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 				glNormal3fv(normal);
 
 				glTexCoord2f(j * 1.0f / column, (i + 1) * 1.0f / row);
-				glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
+				glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
 
 				glTexCoord2f(j * 1.0f / column, i * 1.0f / row);
-				glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
+				glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
 
 				glTexCoord2f((j + 1) * 1.0f / column, i * 1.0f / row);
-				glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
+				glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
 
 				normal[0] = nvs[(i * (column - 1) + j) * 2 + 1].X;
 				normal[1] = nvs[(i * (column - 1) + j) * 2 + 1].Y;
@@ -484,13 +486,13 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 				glNormal3fv(normal);
 
 				glTexCoord2f(j * 1.0f / column, (i + 1) * 1.0f / row);
-				glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
+				glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
 
 				glTexCoord2f((j + 1) * 1.0f / column, i * 1.0f / row);
-				glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
+				glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
 
 				glTexCoord2f((j + 1) * 1.0f / column, (i + 1) * 1.0f / row);
-				glVertex3f(dtmX[(i + 1) * column + j + 1], dtmY[(i + 1) * column + j + 1], dtmZ[(i + 1) * column + j + 1]);
+				glVertex3f(demX[(i + 1) * column + j + 1], demY[(i + 1) * column + j + 1], demZ[(i + 1) * column + j + 1]);
 
 				glEnd();
 			}
@@ -499,7 +501,7 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 	}
 	else
 	{
-		//画三角形
+		// 画三角形
 		for (i = 0;i < row - 1;i++)
 			for (j = 0;j < column - 1;j++)
 			{
@@ -511,24 +513,24 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 				normal[2] = nvs[(i * (column - 1) + j) * 2 + 0].Z;
 				glNormal3fv(normal);
 
-				glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
-				glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
-				glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
+				glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
+				glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
+				glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
 
 				normal[0] = nvs[(i * (column - 1) + j) * 2 + 1].X;
 				normal[1] = nvs[(i * (column - 1) + j) * 2 + 1].Y;
 				normal[2] = nvs[(i * (column - 1) + j) * 2 + 1].Z;
 				glNormal3fv(normal);
 
-				glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
-				glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
-				glVertex3f(dtmX[(i + 1) * column + j + 1], dtmY[(i + 1) * column + j + 1], dtmZ[(i + 1) * column + j + 1]);
+				glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
+				glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
+				glVertex3f(demX[(i + 1) * column + j + 1], demY[(i + 1) * column + j + 1], demZ[(i + 1) * column + j + 1]);
 
 				glEnd();
 			}
 	}
 
-	//画四边
+	// 画四边
 	GLfloat baseheight = 0;//50.0f;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -538,10 +540,10 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 		glBegin(GL_QUADS);
 		glColor3f(0.9f, 0.9f, 0.9f);
 
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], minZ - baseheight);
-		glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], minZ - baseheight);
-		glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], minZ - baseheight);
+		glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], minZ - baseheight);
+		glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
 
 		glEnd();
 	}
@@ -551,10 +553,10 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 		glBegin(GL_QUADS);
 		glColor3f(0.9f, 0.9f, 0.9f);
 
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], minZ - baseheight);
-		glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], minZ - baseheight);
-		glVertex3f(dtmX[(i + 1) * column + j], dtmY[(i + 1) * column + j], dtmZ[(i + 1) * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], minZ - baseheight);
+		glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], minZ - baseheight);
+		glVertex3f(demX[(i + 1) * column + j], demY[(i + 1) * column + j], demZ[(i + 1) * column + j]);
 
 		glEnd();
 	}
@@ -564,10 +566,10 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 		glBegin(GL_QUADS);
 		glColor3f(0.9f, 0.9f, 0.9f);
 
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], minZ - baseheight);
-		glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], minZ - baseheight);
-		glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], minZ - baseheight);
+		glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], minZ - baseheight);
+		glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
 
 		glEnd();
 	}
@@ -577,10 +579,10 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 		glBegin(GL_QUADS);
 		glColor3f(0.9f, 0.9f, 0.9f);
 
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], dtmZ[i * column + j]);
-		glVertex3f(dtmX[i * column + j], dtmY[i * column + j], minZ - baseheight);
-		glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], minZ - baseheight);
-		glVertex3f(dtmX[i * column + j + 1], dtmY[i * column + j + 1], dtmZ[i * column + j + 1]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], demZ[i * column + j]);
+		glVertex3f(demX[i * column + j], demY[i * column + j], minZ - baseheight);
+		glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], minZ - baseheight);
+		glVertex3f(demX[i * column + j + 1], demY[i * column + j + 1], demZ[i * column + j + 1]);
 
 		glEnd();
 	}
@@ -590,6 +592,6 @@ void CMFCDemOpenGLDoc::DrawTriangles()
 
 void CMFCDemOpenGLDoc::ReadTextureFile(CString m_texFileName)
 {
-	//读取纹理数据CDIB TODO
+	// 读取纹理数据CDIB TODO
 
 }

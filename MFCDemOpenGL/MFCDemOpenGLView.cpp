@@ -56,15 +56,15 @@ CMFCDemOpenGLView::CMFCDemOpenGLView() noexcept
 	// TODO: 在此处添加构造代码
 
 	m_pDC = NULL;
-	eyez = 4000.0f;
+	eye_z = 4000.0f;
 	pitch_y = 0.0f;
 	roll_x = -60.0f;
 	yaw_z = 0.0f;
 	scale_z = 1.0f;
-	centerx = 0.0f;
+	center_x = 0.0f;
 
 	m_play = FALSE;
-	IfFill = false;
+	IsFilled = false;
 	IfTexture = FALSE;
 	IsPerspective = true;
 }
@@ -75,7 +75,7 @@ CMFCDemOpenGLView::~CMFCDemOpenGLView()
 
 void CMFCDemOpenGLView::DrawScene()
 {
-	glClearColor(0.5f, 0.5f, 1.0f, 1.0f);  // 淡蓝色
+	glClearColor(0.5f, 0.5f, 1.0f, 1.0f);  // 淡蓝紫色
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
@@ -97,17 +97,17 @@ void CMFCDemOpenGLView::DrawScene()
 
 	glPushMatrix();
 	glLoadIdentity();
-	gluLookAt(1.0f, 1.0f, eyez, centerx, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);	// This Determines Where The Camera's Position And View Is
-	glRotatef(roll_x, 1.0f, 0.0f, 0.0f);//	
-	glRotatef(yaw_z, 0.0f, 0.0f, 1.0f);//
-	glRotatef(pitch_y, 0.0f, 1.0f, 0.0f);//
+	gluLookAt(1.0f, 1.0f, eye_z, center_x, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);	// This Determines Where The Camera's Position And View Is
+	glRotatef(roll_x, 1.0f, 0.0f, 0.0f);	
+	glRotatef(yaw_z, 0.0f, 0.0f, 1.0f);
+	glRotatef(pitch_y, 0.0f, 1.0f, 0.0f);
 
 	glScalef(1.0f, 1.0f, scale_z);
 
 	CMFCDemOpenGLDoc* pDoc = GetDocument();
 	if (pDoc->DataExist)
 	{
-		if (IfFill)
+		if (IsFilled)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -340,27 +340,27 @@ void CMFCDemOpenGLView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	case VK_DOWN:
 	{
-		eyez /= 1.2f;
+		eye_z /= 1.2f;
 		Invalidate(FALSE);
 		break;
 	}
 
 	case VK_UP:
 	{
-		eyez *= 1.2f;
+		eye_z *= 1.2f;
 		Invalidate(FALSE);
 		break;
 	}
 
 	case VK_LEFT:
 	{
-		centerx += 20.f;
+		center_x += 20.f;
 		Invalidate(FALSE);
 		break;
 	}
 	case VK_RIGHT:
 	{
-		centerx -= 20.f;
+		center_x -= 20.f;
 		Invalidate(FALSE);
 		break;
 	}
@@ -458,15 +458,15 @@ void CMFCDemOpenGLView::OnRotatexa()
 
 void CMFCDemOpenGLView::OnRight()
 {
-	//右移
-	centerx -= 20.f;
+	// 右移
+	center_x -= 20.f;
 	Invalidate(FALSE);
 }
 
 void CMFCDemOpenGLView::OnLeft()
 {
 	// 左移
-	centerx += 20.f;
+	center_x += 20.f;
 	Invalidate(FALSE);
 }
 
@@ -487,20 +487,20 @@ void CMFCDemOpenGLView::OnShorten()
 void CMFCDemOpenGLView::OnZoomin()
 {
 	// 放大
-	eyez /= 1.2f;
+	eye_z /= 1.2f;
 	Invalidate(FALSE);
 }
 
 void CMFCDemOpenGLView::OnZoomout()
 {
 	// 缩小
-	eyez *= 1.2f;
+	eye_z *= 1.2f;
 	Invalidate(FALSE);
 }
 
 void CMFCDemOpenGLView::OnTexture()
 {
-	// 贴加纹理
+	// 贴加纹理渲染
 	if (!IfTexture)
 	{
 		static char BASED_CODE szFilter[] = "BMP Files (*.bmp)|*.bmp||All Files (*.*)|*.*||";
@@ -521,7 +521,7 @@ void CMFCDemOpenGLView::OnTexture()
 void CMFCDemOpenGLView::OnFill()
 {
 	// 填充三角形
-	IfFill = !IfFill;
+	IsFilled = !IsFilled;
 	Invalidate(FALSE);
 }
 
@@ -532,12 +532,12 @@ BOOL CMFCDemOpenGLView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	// 鼠标滚轮控制缩放，解决屏幕频繁重绘闪烁，用双缓冲+invalidate的false参数，考虑可以增加鼠标拖动漫游
 	if (zDelta > 0)
 	{
-		eyez /= 1.2f;
+		eye_z /= 1.2f;
 		Invalidate(FALSE);
 	}
 	if (zDelta < 0)
 	{
-		eyez *= 1.2f;
+		eye_z *= 1.2f;
 		Invalidate(FALSE);
 	}
 

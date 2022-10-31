@@ -36,23 +36,23 @@ public:
 
 // 实现
 protected:
-	GLfloat* dtmX, * dtmY, * dtmZ;
+	GLfloat* demX, * demY, * demZ;
 	int column, row;
-	//GLfloat cell;
+	// GLfloat cell;
 	GLfloat cellx, celly;
 	GLfloat maxX, maxY, maxZ, minX, minY, minZ, Xc, Yc, Zc;
 	GLfloat noData;
-	Vector* nvs;//所有的法向量
+	Vector* nvs; // 存储所有的法向量
 
 	GLint width, height;
 	GLubyte* m_pTextureBits;
 
 public:
 	BOOL DataExist;
-	BOOL ReadDTMFile(CString fileName);
+	BOOL ReadDEMFile(CString fileName);
 	BOOL ReadGRDFile(CString fileName);
-	void Centerlize(); //坐标中心化
-	void GetTriNormal(GLfloat* vertex1, GLfloat* vertex2, GLfloat* vertex3, GLfloat* normal); //计算三角形的法向量
+	void Centerlize(); // 坐标中心化
+	void GetTriNormal(GLfloat* vertex1, GLfloat* vertex2, GLfloat* vertex3, GLfloat* normal); // 计算三角形的法向量
 	void CalNormals();
 	void DrawTriangles();
 	void ReadTextureFile(CString m_texFile);

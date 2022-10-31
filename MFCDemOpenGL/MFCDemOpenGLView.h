@@ -18,7 +18,7 @@ public:
 // 操作
 public:
 	BOOL IsTextureDEM() const { return IfTexture; }
-	CString GetTextureFileName() const { return m_texFileName; }
+	CString GetTextureFile() const { return m_texFileName; }
 
 protected:
 	CClientDC* m_pDC;
@@ -26,11 +26,11 @@ protected:
 
 	GLfloat yaw_z, roll_x, pitch_y; // 旋转角
 	GLfloat scale_z; // 高度比缩放参数
-	GLfloat eyez; // 视点高度
-	GLfloat centerx; // 物体中心点X坐标
+	GLfloat eye_z; // 视点高度
+	GLfloat center_x; // 物体中心点X坐标
 
 	BOOL m_play;
-	BOOL IfFill; // 是否填充三角形
+	BOOL IsFilled; // 是否填充三角形
 	BOOL IfTexture; // 纹理
 	BOOL IsPerspective; // 透视投影还是正射投影
 
