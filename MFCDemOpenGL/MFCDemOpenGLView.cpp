@@ -75,7 +75,7 @@ CMFCDemOpenGLView::~CMFCDemOpenGLView()
 
 void CMFCDemOpenGLView::DrawScene()
 {
-	glClearColor(0.6f, 0.6f, 1.0f, 1.0f);
+	glClearColor(0.5f, 0.5f, 1.0f, 1.0f);  // 淡蓝色
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
