@@ -8,3 +8,4 @@ Debug/
 *.config
 *.dat
 *.asc
+packages/
