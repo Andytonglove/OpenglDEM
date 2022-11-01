@@ -87,7 +87,7 @@ void CMFCDemOpenGLView::DrawScene()
 		gluPerspective(45.0f, 1.0f, 1.0f, 10000.0f);
 	}
 	else if (!IsPerspective) {
-		glOrtho(-1000.0f, 1000.0f, -1000.0f, 1000.0f, 1.0f, 10000.0f); // 参数可能还需要再调一下
+		glOrtho(-4000.0f, 4000.0f, -3000.0f, 3000.0f, 0.0f, 10000.0f); // 正射参数可能还需要再调一下
 	}
 
 	glMatrixMode(GL_MODELVIEW); // 设置模型视图矩阵
@@ -220,8 +220,8 @@ void CMFCDemOpenGLView::Init()
     if (!bSetupPixelFormat())
         return;
 
-    n =::GetPixelFormat(m_pDC->GetSafeHdc());
-    ::DescribePixelFormat(m_pDC->GetSafeHdc(), n, sizeof(pfd), &pfd);
+    n = GetPixelFormat(m_pDC->GetSafeHdc());
+    DescribePixelFormat(m_pDC->GetSafeHdc(), n, sizeof(pfd), &pfd);
 
     hrc = wglCreateContext(m_pDC->GetSafeHdc());
     wglMakeCurrent(m_pDC->GetSafeHdc(), hrc);
