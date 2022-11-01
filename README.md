@@ -7,7 +7,7 @@
 
 1. 数据源
 	1. QQ群上传的DEM文件：test.asc文件
-	2. 自己下载的一块高分辨率影像数据
+	2. 自己下载的一块高分辨率影像数据，这里我用的SPOT5.tif，由ARCGIS转asc与bmp格式导入
 
 2. 技术要求
     1. 基于MFC + OpenGL，编写单视窗文档，初始化OpenGL环境（蓝色底色）；（5分）
@@ -47,4 +47,5 @@
 2. 打开运行程序MFC窗口，通过`打开文件`读入test.asc或其他DEM文件，通过菜单中的`DEM操作`下的功能按钮或快捷键实现各类DEM操作功能。  
 
 3. 具体MFC运行截图如效果下：
-![screenshot](.\MFCDemOpenGL\res\screenshot.png)
+![screenshot1](.\MFCDemOpenGL\res\screenshot1.png)
+![screenshot2](.\MFCDemOpenGL\res\screenshot2.png)
