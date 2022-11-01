@@ -5,7 +5,7 @@ Debug/
 *.mdb
 *.ldb
 *.sln
-*.config
+# *.config
 *.dat
 *.asc
 packages/
