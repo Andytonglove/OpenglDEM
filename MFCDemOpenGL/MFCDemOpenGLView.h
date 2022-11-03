@@ -23,6 +23,7 @@ public:
 protected:
 	CClientDC* m_pDC;
 	CRect m_oldRect;
+	// 规范化成员变量命名：m_iOldRect、m_bIsFilled，即m+_+类型首字母+名字
 
 	GLfloat yaw_z, roll_x, pitch_y; // 旋转角
 	GLfloat scale_z; // 高度比缩放参数
