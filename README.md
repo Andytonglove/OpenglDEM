@@ -49,3 +49,7 @@
 3. 具体MFC运行截图如效果下：
 ![screenshot1](.\MFCDemOpenGL\res\screenshot1.png)
 ![screenshot2](.\MFCDemOpenGL\res\screenshot2.png)
+
+
+#### Reference
+> https://blog.csdn.net/bcbobo21cn/article/details/121187715
