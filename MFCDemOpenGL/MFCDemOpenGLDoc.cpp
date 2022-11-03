@@ -424,6 +424,7 @@ void CMFCDemOpenGLDoc::CalNormals()
 
 void CMFCDemOpenGLDoc::DrawTriangles()
 {
+	// 需要加入按比例画一定数量的三角形函数，如果视点远/距离远就画三角形稀疏一些，效率更好 TODO曲面细分
 	GLint i, j;
 	GLfloat normal[3];
 
