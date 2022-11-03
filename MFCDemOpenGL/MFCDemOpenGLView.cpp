@@ -97,7 +97,13 @@ void CMFCDemOpenGLView::DrawScene()
 
 	glPushMatrix();
 	glLoadIdentity();
-	gluLookAt(1.0f, 1.0f, eye_z, center_x, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);	// This Determines Where The Camera's Position And View Is
+	// 调整视点中心
+	if (IsPerspective) {
+		gluLookAt(1.0f, 1.0f, eye_z, center_x, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);	// This Determines Where The Camera's Position And View Is
+	}
+	else if (!IsPerspective) {
+		gluLookAt(eye_z, eye_z, eye_z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	}
 	glRotatef(roll_x, 1.0f, 0.0f, 0.0f);	
 	glRotatef(yaw_z, 0.0f, 0.0f, 1.0f);
 	glRotatef(pitch_y, 0.0f, 1.0f, 0.0f);
