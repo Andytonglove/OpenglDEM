@@ -157,7 +157,7 @@ bool CTranHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 	{
 	case osgGA::GUIEventAdapter::KEYDOWN://平移操作
 	{
-		//6层移动
+		//一、地形移动
 		//X轴
 		if (ea.getKey() == 'q') {
 			osg::ref_ptr<osg::Group> group = new osg::Group();
@@ -216,7 +216,8 @@ bool CTranHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			group->addChild(node_2);
 			view->setSceneData(group.get());
 		}
-		//7层移动
+
+		//二、模型移动
 		//X轴
 		if (ea.getKey() == 't') {
 			osg::ref_ptr<osg::Group> group = new osg::Group();
@@ -272,6 +273,83 @@ bool CTranHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			group->addChild(node_1);
 			trans->addChild(node_2);
 			group->addChild(trans);
+			view->setSceneData(group.get());
+		}
+
+		//三、模型一起移动
+		//X轴
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_1) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(-X, 0, 0));
+			trans2->setMatrix(osg::Matrix::translate(-X, 0, 0));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
+			view->setSceneData(group.get());
+		}
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_2) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(X, 0, 0));
+			trans2->setMatrix(osg::Matrix::translate(X, 0, 0));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
+			view->setSceneData(group.get());
+		}
+		//Y轴
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_3) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(0, -Y, 0));
+			trans2->setMatrix(osg::Matrix::translate(0, -Y, 0));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
+			view->setSceneData(group.get());
+		}
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_4) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(0, Y, 0));
+			trans2->setMatrix(osg::Matrix::translate(0, Y, 0));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
+			view->setSceneData(group.get());
+		}
+		//Z轴
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_5) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(0, 0, -Z));
+			trans2->setMatrix(osg::Matrix::translate(0, 0, -Z));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
+			view->setSceneData(group.get());
+		}
+		if (ea.getKey() == osgGA::GUIEventAdapter::KEY_6) {
+			osg::ref_ptr<osg::Group> group = new osg::Group();
+			osg::ref_ptr <osg::MatrixTransform> trans1 = new osg::MatrixTransform;
+			osg::ref_ptr <osg::MatrixTransform> trans2 = new osg::MatrixTransform;
+			trans1->setMatrix(osg::Matrix::translate(0, 0, Z));
+			trans2->setMatrix(osg::Matrix::translate(0, 0, Z));
+			trans1->addChild(node_1);
+			trans2->addChild(node_2);
+			group->addChild(trans1);
+			group->addChild(trans2);
 			view->setSceneData(group.get());
 		}
 		break;
